@@ -24,7 +24,7 @@ Create a application that manages tasks and schedule using data structure to pri
     1. Add task
     2. Remove task
     3. Display list of tasks when asked for removal
-    4. Reminder 'before a day or an hour or within hour' depending on the diffence of time of enqueuing and deadline.
+    4. Reminder 'before a day or an hour' depending on the diffence of time of enqueuing and deadline.
     5. Reminder note displayed in 'distinct colors' according to different priority values.
 
 ###
@@ -93,7 +93,6 @@ Create a application that manages tasks and schedule using data structure to pri
 - **Advantages over priority queue** :
     - Space complexity : 
         - Unlike priority queue implemented using linked list in vector we don't have to waste extra memory for next node while still having the dynamic property of linked list.
-        - also the problem of having fixed space (memory) that is with array is also solved here.
     - Time complexity :
         - Time complexity of priority queue for enqueuing is **O(n)** and dequeueing is **O(1)** which is reverse in case of vector.
         - However since adding tasks may be more frequent than removing tasks in our case on request or after reminder, vector stands as a better option.
@@ -102,9 +101,24 @@ Create a application that manages tasks and schedule using data structure to pri
 ***Few other justifications for use of STLs***
 ###
 
+    1. <vector> : For using vector data structure.
+    2. <chrono> : For storing and comparing time.
+    3. <sstream> : To convert a string representing a deadline into a chrono time format.
+    4. <iomanip> : To ignore extra space or padding while entering deadline
+    4. <thread> : To enable concurrent execution of tasks, allowing for simultaneous checking of deadlines and handling user input.
+    5. <mutex> :  Ensures of only thread accessing the list at a time preventing simultaneous modifications and potential conflicts between threads.
+- Besides, we have used infinite while loops to enable users to enter tasks for as many times they desire while simontaneously checking over deadlines for reminders.
+
+###
 
 
 
+## Contributing
 
-
+| Names   | Contribution areas                       |Percentage|
+|---------|------------------------------------------|:--------:|
+| Radhika | Reminder Function and UserInput Function |25        |
+| Nandini | Reminder Function and UserInput Function |25        |
+| Jhil    | Classes and Readme                       |25        |
+| Mitwa   | Classes and Readme                       |25        |
 
