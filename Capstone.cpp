@@ -17,33 +17,19 @@ namespace Color {
 }
 
 class Task {
-
 public:
     string name;
     chrono::time_point<chrono::system_clock> deadline;  //chrono STL is used for taking deadline in YYYY-MM-DD HH:MM:SS format
     int priority;
-    Task( string& n,chrono::time_point<chrono::system_clock>& d, int p ) : name(n), deadline(d), priority(p){} //constructor for class task
-
-    string getname(){ //getter method for name 
-        return name;
-    }
-
-    chrono::time_point<chrono::system_clock> getdeadline(){ //getter method for deadline
-        return deadline;
-    }
-
-    int getpriority(){  //getter method for priority
-        return priority;
-    }
-
-   
-     
+ 
+    Task( string& n,chrono::time_point<chrono::system_clock>& d, int p ) : name(n), deadline(d), priority(p){} //constructor for class task  
 };
 
 class TaskManager {
 public:
     vector<Task> tasks;  //vector(dynamic array) for task storage
     mutex mtx;  //for threading 
+
     void addtask(const Task& t) { //function for adding task in vector
         lock_guard<mutex> lock(mtx); //to prevent multiple threading 
         tasks.push_back(t);
@@ -60,7 +46,7 @@ public:
         lock_guard<mutex> lock(mtx);
         cout << "Tasks:\n";
         for (int i = 0; i < tasks.size(); ++i) {
-            cout << i << ": " << tasks[i].getname() << endl;
+            cout << i << ": " << tasks[i].name << endl;
         }
     }
 
@@ -72,21 +58,21 @@ public:
         auto now = chrono::system_clock::now();    //takes current time
 
         for (auto i = tasks.begin(); i != tasks.end();) {   //check for reminder in whole vector(list of tasks)
-            auto timeleft = chrono::duration_cast<chrono::seconds>(i->getdeadline() - now).count();    //calculating time left for deadline
+            auto timeleft = chrono::duration_cast<chrono::seconds>(i->deadline - now).count();    //calculating time left for deadline
             if (timeleft == 24*60*60) {    // If 24 hours remaining for deadline
                 
-                switch(i->getpriority()) {
+                switch(i->priority) {
                     case 1:
                        
-                        cout << "\n Reminder: Task with " <<Color::Blue<< "Low priority task"<<Color::Reset << " '" << i->getname() << "' is due tomorrow.\n";
+                        cout << "\n Reminder: Task with " <<Color::Blue<< "Low priority task"<<Color::Reset << " '" << i->name << "' is due tomorrow.\n";
                         break;
                     case 2:
                        
-                        cout << "\n Reminder: Task with " <<Color::Green<< "Medium priority task" <<Color::Reset<< " '" << i->getname() << "' is due tomorrow.\n";
+                        cout << "\n Reminder: Task with " <<Color::Green<< "Medium priority task" <<Color::Reset<< " '" << i->name<< "' is due tomorrow.\n";
                         break;
                     case 3:
                         
-                        cout << "\n Reminder: Task with " <<Color::Red<< "High priority task" <<Color::Reset<< " '" << i->getname() << "' is due tomorrow.\n";
+                        cout << "\n Reminder: Task with " <<Color::Red<< "High priority task" <<Color::Reset<< " '" << i->name<< "' is due tomorrow.\n";
                         break;
                     default:
                         cout<<"\n enter proper priority!!"<<endl;
@@ -95,18 +81,18 @@ public:
               
             } 
              if (timeleft <=60*60 && timeleft>=60*53) { // If 1 hour remaining for deadline
-               switch(i->getpriority()) {
+               switch(i->priority) {
                     case 1:
                        
-                        cout << "\n Reminder: Task with " <<Color::Blue<< "Low priority task"<<Color::Reset << " '" << i->getname() << "' is due in 1 hour.\n";
+                        cout << "\n Reminder: Task with " <<Color::Blue<< "Low priority task"<<Color::Reset << " '" << i->name << "' is due in 1 hour.\n";
                         break;
                     case 2:
                        
-                        cout << "\n Reminder: Task with " <<Color::Green<< "Medium priority task" <<Color::Reset<< " '" << i->getname() << "' is due in 1 hour.\n";
+                        cout << "\n Reminder: Task with " <<Color::Green<< "Medium priority task" <<Color::Reset<< " '" << i->name<< "' is due in 1 hour.\n";
                         break;
                     case 3:
                         
-                        cout << "\n Reminder: Task with " <<Color::Red<< "High priority task" <<Color::Reset<< " '" << i->getname() << "' is due in 1 hour.\n";
+                        cout << "\n Reminder: Task with " <<Color::Red<< "High priority task" <<Color::Reset<< " '" << i->name<< "' is due in 1 hour.\n";
                         break;
                     default:
                         cout<<"\n enter proper priority!!"<<endl;
@@ -115,7 +101,7 @@ public:
                
             } 
              if (timeleft < 60*53) { // If deadline has passed
-                cout << "\n Deadline is within 1 hour : '" << i->getname() << "'.\n";
+                cout << "\n Deadline is within 1 hour : '" << i->name << "'.\n";
                 i = tasks.erase(i); // Remove the task
 
             } else {
@@ -173,7 +159,7 @@ int main() {
                 cout << "Enter the index of the task you want to mark as done and remove: ";
                 int index;
                 cin >> index; //if index is greater than the size of vector then the user will be asked again for add/remove task without removing any tasks
-                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ignore rest of the input buffer
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore rest of the input buffer
                 taskmanager.removetask(index);
             } else {
                 cout << "Invalid choice. Please try again.\n";
