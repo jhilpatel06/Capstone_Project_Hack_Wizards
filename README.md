@@ -24,7 +24,7 @@ Create a application that manages tasks and schedule using data structure to pri
     1. Add task
     2. Remove task
     3. Display list of tasks when asked for removal
-    4. Reminder 'before a day or an hour' depending on the diffence of time of enqueuing and deadline.
+    4. Reminder 'before a day or an hour or within hour' depending on the diffence of time of enqueuing and deadline.
     5. Reminder note displayed in 'distinct colors' according to different priority values.
 
 ###
@@ -93,6 +93,7 @@ Create a application that manages tasks and schedule using data structure to pri
 - **Advantages over priority queue** :
     - Space complexity : 
         - Unlike priority queue implemented using linked list in vector we don't have to waste extra memory for next node while still having the dynamic property of linked list.
+        - also the problem of having fixed space (memory) that is with array is also solved here.
     - Time complexity :
         - Time complexity of priority queue for enqueuing is **O(n)** and dequeueing is **O(1)** which is reverse in case of vector.
         - However since adding tasks may be more frequent than removing tasks in our case on request or after reminder, vector stands as a better option.
