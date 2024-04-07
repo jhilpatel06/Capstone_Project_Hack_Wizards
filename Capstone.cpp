@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <sstream>
 #include <mutex>
+#include <limits>
 using namespace std;
 
 // ANSI color codes for text color
@@ -52,16 +53,31 @@ public:
         tasks.push_back(task);
     }
 
-   void checkDeadlines() {  //function for checking deadlines 
+    void removeTask(int i) {  //function to remove task from the vector
+        if (i >= 0 && i < tasks.size()) {
+            lock_guard<mutex> lock(mtx);
+            tasks.erase(tasks.begin()+i);
+        }
+    }
+
+    void printTasks() {
+        lock_guard<mutex> lock(mtx);
+        cout << "Tasks:\n";
+        for (int i = 0; i < tasks.size(); ++i) {
+            cout << i << ": " << tasks[i].getname() << endl;
+        }
+    }
+
+   void checkDeadlines() {     //function for checking deadlines 
     while (true) {
-        this_thread::sleep_for(chrono::seconds(1)); // Check every second
+        this_thread::sleep_for(chrono::seconds(1));   // Check every second
 
         lock_guard<mutex> lock(mtx);
-        auto now = chrono::system_clock::now(); //takes current time
+        auto now = chrono::system_clock::now();    //takes current time
 
-        for (auto i = tasks.begin(); i != tasks.end();) {
-            auto timeLeft = chrono::duration_cast<chrono::seconds>(i->getdeadline() - now).count();
-            if (timeLeft == 24*60*60) { // If 24 hours remaining
+        for (auto i = tasks.begin(); i != tasks.end();) {   //check for reminder in whole vector(list of tasks)
+            auto timeLeft = chrono::duration_cast<chrono::seconds>(i->getdeadline() - now).count();    //calculating time left for deadline
+            if (timeLeft == 24*60*60) {    // If 24 hours remaining for deadline
                 
                 switch(i->getPriority()) {
                     case 1:
@@ -74,15 +90,15 @@ public:
                         break;
                     case 3:
                         
-                        cout << "Reminer: Task with " <<Color::Red<< "High priority task" <<Color::Reset<< " '" << i->getname() << "' is due tomorrow.\n";
+                        cout << "Reminder: Task with " <<Color::Red<< "High priority task" <<Color::Reset<< " '" << i->getname() << "' is due tomorrow.\n";
                         break;
                     default:
                         cout<<"enter proper priority!!"<<endl;
                 }
-               i = tasks.erase(i);
+               i = tasks.erase(i); //remove task after showing reminder
               
             } 
-             if (timeLeft <=60*60 && timeLeft>=60*53) { // If 1 hour remaining
+             if (timeLeft <=60*60 && timeLeft>=60*53) { // If 1 hour remaining for deadline
                switch(i->getPriority()) {
                     case 1:
                        
@@ -99,7 +115,7 @@ public:
                     default:
                         cout<<"enter proper priority!!"<<endl;
                 }
-                i = tasks.erase(i);
+                i = tasks.erase(i); //remove task after showing reminder
                
             } 
              if (timeLeft < 60*55) { // If deadline has passed
@@ -128,33 +144,48 @@ int main() {
             string name;
             string deadlineString;
             int priority;
-            cout << "Enter task name: ";
-            getline(cin, name);
+            cout << "Do you want to add or remove a task? (add/remove): "; 
+            string choice;
+            getline(cin, choice);
 
-            cout << "Enter task deadline in format 'YYYY-MM-DD HH:MM:SS': ";
-            getline(cin, deadlineString);
+            if (choice == "add") {
+                cout << "Enter task name: ";
+                getline(cin, name);
 
-            cout << "Enter task priority (1-3): ";
-            cin >> priority;
-            cin.ignore(); // Ignore newline character
-           
+                cout << "Enter task deadline in format 'YYYY-MM-DD HH:MM:SS': ";
+                getline(cin, deadlineString);
 
-            tm tm = {};
-            istringstream ss(deadlineString);
-            ss >> get_time(&tm, "%Y-%m-%d %T");
+                cout << "Enter task priority (1-3): ";
+                cin >> priority;
+                cin.ignore(); // Ignore newline character
+               
 
-            if (ss.fail() || priority < 1 || priority > 3) {
-                cout << "Invalid input. Please try again.\n";
-                continue;
+                tm tm = {};
+                istringstream ss(deadlineString);
+                ss >> get_time(&tm, "%Y-%m-%d %T");
+
+                if (ss.fail() || priority < 1 || priority > 3) {
+                    cout << "Invalid input. Please try again.\n";
+                    continue;
+                }
+
+                chrono::system_clock::time_point deadline = chrono::system_clock::from_time_t(mktime(&tm)); //convert deadline string to chrono date format 
+
+                taskManager.addTask(Task(name, deadline, priority));  //insert task input taken from user 
+            } else if (choice == "remove") {
+                taskManager.printTasks();
+                cout << "Enter the index of the task you want to mark as done and remove: ";
+                int index;
+                cin >> index; //if index is greater than the size of vector then the user will be asked again for add/remove task without removing any tasks
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore rest of the input buffer
+                taskManager.removeTask(index);
+            } else {
+                cout << "Invalid choice. Please try again.\n";
             }
-
-            chrono::system_clock::time_point deadline = chrono::system_clock::from_time_t(mktime(&tm));
-
-            taskManager.addTask(Task(name, deadline, priority));
         }
     });
 
-    deadlineThread.join();
+    deadlineThread.join();  //to make checkdeadline function and useInput function to work in parallel
     userInputThread.join();
 
     return 0;
