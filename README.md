@@ -106,7 +106,7 @@ Create a application that manages tasks and schedule using data structure to pri
     3. <sstream> : To convert a string representing a deadline into a chrono time format.
     4. <iomanip> : To ignore extra space or padding while entering deadline
     4. <thread> : To enable concurrent execution of tasks, allowing for simultaneous checking of deadlines and handling user input.
-    5. <mutex> :  Ensures of only thread accessing the list at a time preventing simultaneous modifications and potential conflicts between threads.
+    5. <mutex> :  Ensures of only one thread accessing the list at a time preventing simultaneous modifications and potential conflicts between threads.
 - Besides, we have used infinite while loops to enable users to enter tasks for as many times they desire while simontaneously checking over deadlines for reminders.
 
 ###
