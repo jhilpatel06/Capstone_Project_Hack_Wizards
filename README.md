@@ -18,8 +18,18 @@ Create a application that manages tasks and schedule using data structure to pri
 
 
 # Documentation
+***Features we aim to provide :***
+###
 
+    1. Add task
+    2. Remove task
+    3. Display list of tasks when asked for removal
+    4. Reminder 'before a day or an hour' depending on the diffence of time of enqueuing and deadline.
+    5. Reminder note displayed in 'distinct colors' according to different priority values.
+
+###
 **Algorithm to manage a To do List with a reminder feature**
+###
 
 ***Input***:
 
@@ -59,9 +69,41 @@ Create a application that manages tasks and schedule using data structure to pri
     - Green
     (Used in CheckDeadline function to display reminder statement in 'Red' color for tasks with priority 1, 'Blue' for 2 and 'Green' for 3.)
 5. In main function :
-    - Initialize an object for TaskManager.
+    - Create an object for TaskManager.
     - Ask user to Add or remove tasks : 
         a.if input='add', call AddTask function.
         b.if input='remove',call RemoveTask function.
     - Thread and join the CheckDeadline and UserInput function for them to run parallely.
 6.End
+```
+
+###
+
+***Choice of data structure :- <VECTOR>***
+
+###
+
+- Vector is a ***'dynamic array'*** and hence is advantageous over both simple array and linked list.
+- **Space complexity** = **'O(n)'** where n the number of tasks present in the 'To do list'
+- **Time complexity** :  In reference to our code.
+    - Searching or Accessing element (tasks) by index = **O(1)**
+    - Add task = **O(1)** since new task is by default appended to the end.
+    - Remove task = **O(1)** since we are deleting task by index.
+    - Comparing time for Reminder = **O(n)**
+- **Advantages over priority queue** :
+    - Space complexity : 
+        - Unlike priority queue implemented using linked list in vector we don't have to waste extra memory for next node while still having the dynamic property of linked list.
+    - Time complexity :
+        - Time complexity of priority queue for enqueuing is **O(n)** and dequeueing is **O(1)** which is reverse in case of vector.
+        - However since adding tasks may be more frequent than removing tasks in our case on request or after reminder, vector stands as a better option.
+
+###
+***Few other justifications for use of STLs***
+###
+
+
+
+
+
+
+
