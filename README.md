@@ -125,7 +125,8 @@ Create a application that manages tasks and schedule using data structure to pri
 
 ## Running test case
 
-![Running Test Case screenshot](https://photos.google.com/photo/AF1QipP0cwffVji01hBNa9z9gPmXD_z8jbQ0Dn-0K43e)
+![Running Test Case screenshot](photos.app.goo.gl/w5TJGk1MJyGWkzVm8)
+
 
 
 
