@@ -5,89 +5,111 @@
 #include <iomanip>
 #include <sstream>
 #include <mutex>
-
 using namespace std;
+
+// ANSI color codes for text color
+namespace Color {
+    const char* Reset = "\033[0m";
+    const char* Red = "\033[31m";
+    const char* Green = "\033[32m";
+    const char* Blue = "\033[34m";
+}
 
 class Task {
 private:
     string name;
-    chrono::time_point<chrono::system_clock> deadline;
-    int priority; // Priority: 1 (lowest) - 3 (highest)
+    chrono::time_point<chrono::system_clock> deadline;  //chrono STL is used for taking deadline in YYYY-MM-DD HH:MM:SS format
+    int priority;
+    
+    
 public:
-    Task(const string& n, const chrono::time_point<chrono::system_clock>& d, int p) : name(n), deadline(d), priority(p) {}
+    Task( string& n,chrono::time_point<chrono::system_clock>& d, int p ) : name(n), deadline(d), priority(p){} //constructor for class task
 
-    string getName() const {
+    string getname(){ //getter method for name 
         return name;
     }
 
-    chrono::time_point<chrono::system_clock> getDeadline() const {
+    chrono::time_point<chrono::system_clock> getdeadline(){ //getter method for deadline
         return deadline;
     }
 
-    int getPriority() const {
+    int getPriority(){  //getter method for priority
         return priority;
     }
+
+   
+     
 };
 
 class TaskManager {
 private:
-    vector<Task> tasks;
-    mutex mtx;
+    vector<Task> tasks;  //vector(dynamic array) for task storage
+    mutex mtx;  //for threading 
 
 public:
-    void addTask(const Task& task) {
-        lock_guard<mutex> lock(mtx);
+    void addTask(const Task& task) { //function for adding task in vector
+        lock_guard<mutex> lock(mtx); //to prevent multiple threading 
         tasks.push_back(task);
     }
 
-   void checkDeadlines() {
+   void checkDeadlines() {  //function for checking deadlines 
     while (true) {
         this_thread::sleep_for(chrono::seconds(1)); // Check every second
 
         lock_guard<mutex> lock(mtx);
-        auto now = chrono::system_clock::now();
-        for (auto it = tasks.begin(); it != tasks.end();) {
-            auto timeLeft = chrono::duration_cast<chrono::seconds>(it->getDeadline() - now).count();
+        auto now = chrono::system_clock::now(); //takes current time
+
+        for (auto i = tasks.begin(); i != tasks.end();) {
+            auto timeLeft = chrono::duration_cast<chrono::seconds>(i->getdeadline() - now).count();
             if (timeLeft == 24*60*60) { // If 24 hours remaining
-                string priorityReminder;
-                switch(it->getPriority()) {
+                
+                switch(i->getPriority()) {
                     case 1:
-                        priorityReminder = "Low priority task";
+                       
+                        cout << "Reminder: Task with " <<Color::Blue<< "Low priority task"<<Color::Reset << " '" << i->getname() << "' is due tomorrow.\n";
                         break;
                     case 2:
-                        priorityReminder = "Medium priority task";
+                       
+                        cout << "Reminder: Task with " <<Color::Green<< "Medium priority task" <<Color::Reset<< " '" << i->getname() << "' is due tomorrow.\n";
                         break;
                     case 3:
-                        priorityReminder = "High priority task";
+                        
+                        cout << "Reminer: Task with " <<Color::Red<< "High priority task" <<Color::Reset<< " '" << i->getname() << "' is due tomorrow.\n";
                         break;
                     default:
-                        priorityReminder = "Task";
+                        cout<<"enter proper priority!!"<<endl;
                 }
-                cout << "Reminder: Task is " << priorityReminder << " '" << it->getName() << "' is due tomorrow.\n";
-            } else if (timeLeft == 60*60) { // If 1 hour remaining
-                string priorityReminder;
-                switch(it->getPriority()) {
+               i = tasks.erase(i);
+              
+            } 
+             if (timeLeft <=60*60 && timeLeft>=60*53) { // If 1 hour remaining
+               switch(i->getPriority()) {
                     case 1:
-                        priorityReminder = "Low priority task";
+                       
+                        cout << "Reminder: Task with " <<Color::Blue<< "Low priority task"<<Color::Reset << " '" << i->getname() << "' is due in 1 hour.\n";
                         break;
                     case 2:
-                        priorityReminder = "Medium priority task";
+                       
+                        cout << "Reminder: Task with " <<Color::Green<< "Medium priority task" <<Color::Reset<< " '" << i->getname() << "' is due in 1 hour.\n";
                         break;
                     case 3:
-                        priorityReminder = "High priority task";
+                        
+                        cout << "Reminder: Task with " <<Color::Red<< "High priority task" <<Color::Reset<< " '" << i->getname() << "' is due in 1 hour.\n";
                         break;
                     default:
-                        priorityReminder = "Task";
+                        cout<<"enter proper priority!!"<<endl;
                 }
-                cout << "Reminder: Task is " << priorityReminder << " '" << it->getName() << "' is due in 1 hour.\n";
+                i = tasks.erase(i);
                
-            } else if (timeLeft <= 60*60) { // If deadline has passed
-                cout << "Deadline is within 1 hour : '" << it->getName() << "'.\n";
-                it = tasks.erase(it); // Remove the task
+            } 
+             if (timeLeft < 60*55) { // If deadline has passed
+                cout << "Deadline is within 1 hour : '" << i->getname() << "'.\n";
+                i = tasks.erase(i); // Remove the task
+
             } else {
-                ++it;
+                ++i;
             }
-            break;
+       break;
         }
     }
 }
@@ -115,6 +137,7 @@ int main() {
             cout << "Enter task priority (1-3): ";
             cin >> priority;
             cin.ignore(); // Ignore newline character
+           
 
             tm tm = {};
             istringstream ss(deadlineString);
