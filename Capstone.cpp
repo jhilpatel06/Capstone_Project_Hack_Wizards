@@ -17,13 +17,11 @@ namespace Color {
 }
 
 class Task {
-private:
+
+public:
     string name;
     chrono::time_point<chrono::system_clock> deadline;  //chrono STL is used for taking deadline in YYYY-MM-DD HH:MM:SS format
     int priority;
-    
-    
-public:
     Task( string& n,chrono::time_point<chrono::system_clock>& d, int p ) : name(n), deadline(d), priority(p){} //constructor for class task
 
     string getname(){ //getter method for name 
@@ -43,11 +41,9 @@ public:
 };
 
 class TaskManager {
-private:
+public:
     vector<Task> tasks;  //vector(dynamic array) for task storage
     mutex mtx;  //for threading 
-
-public:
     void addtask(const Task& t) { //function for adding task in vector
         lock_guard<mutex> lock(mtx); //to prevent multiple threading 
         tasks.push_back(t);
