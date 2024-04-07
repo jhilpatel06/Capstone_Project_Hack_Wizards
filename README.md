@@ -43,15 +43,25 @@ Create a application that manages tasks and schedule using data structure to pri
     - vector 'tasks' 
     - mutex 'mtx'
 3. Methods of TaskManager:
-    - AddTask : Add task in vector as per description provided by user.
-    - PrintTask : Displays list of tasks along with their indices.
-    - RemoveTask : Removes task at index entered by the user.
-    - CheckDeadline : Checks deadlines periodically an displays remainder statement.
-4. Details in CheckDeadline method :
-    - Sleeps for 1 second and compares current time with deadline periodically.
-    - If current time is a day less than the deadline then it displays note "Task <taskname> is due tommorow." and dequeues the task.
-    - If current time is an hour less than the deadline then it displays note "Task <taskname> is due in 1 hour." and dequeues the task.
-    *(This is specially for those tasks that were enqueued at time less than 24 hours to deadline.)
-    -Else if the task is enqueued in less than an hour to the deadline it will immidiately display "Task due within an hour".
-5.
-
+    a. AddTask : Add task in vector as per description provided by the user.
+    b. PrintTask : Displays list of tasks along with their indices.
+    c. RemoveTask : Removes task at index entered by the user.
+    d. CheckDeadline : Checks deadlines periodically and displays remainder statement.
+        - Sleeps for 1 second and compares current time with deadline periodically.
+        - If current time is a day less than the deadline then it displays note "Task <taskname> is due tommorow." and dequeues the task.
+        - If current time is an hour less than the deadline then it displays note "Task <taskname> is due in 1 hour." and dequeues the task.
+        *(This is specially for those tasks that were enqueued at time less than 24 hours to deadline.)
+        -Else if the task is enqueued in less than an hour to the deadline it will immidiately display "Task due within an hour".
+4. Class Color with attributes :
+    - Reset
+    - Red
+    - Blue
+    - Green
+    (Used in CheckDeadline function to display reminder statement in 'Red' color for tasks with priority 1, 'Blue' for 2 and 'Green' for 3.)
+5. In main function :
+    - Initialize an object for TaskManager.
+    - Ask user to Add or remove tasks : 
+        a.if input='add', call AddTask function.
+        b.if input='remove',call RemoveTask function.
+    - Thread and join the CheckDeadline and UserInput function for them to run parallely.
+6.End
